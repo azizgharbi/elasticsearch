@@ -2,6 +2,22 @@
 
 <?php
 
-echo "hello";
 
-?>
+/**
+* 
+*/
+class cool 
+{
+	
+	function __construct()
+	{
+		# code...
+	}
+	public function hello(){
+		echo "booooooooom";
+	}
+
+}
+
+$x= new cool();
+$x->hello();

@@ -1,64 +1,65 @@
 #!/usr/bin/env bash
 
-
 # LAMP server 
 
-PASSWORD='admin'
 PROJECTFOLDER='elastic'
+DOMAINE= 'localhost.elastic.test.com'
 
-# create project folder
-sudo mkdir "/var/www/html/${PROJECTFOLDER}"
+sudo yum install -y httpd
+sudo systemctl start httpd.service
+sudo systemctl enable httpd.service
+sudo yum install -y mariadb-server mariadb
+sudo systemctl start mariadb
+sudo systemctl enable mariadb.service
+sudo yum install -y php php-mysql
 
-# update / upgrade
-sudo apt-get update && sudo apt-get upgrade
-
-# install apache 2.5 and php 5.5
-sudo apt-get install -y apache2
-sudo apt-get install -y php5
-
-# install mysql and give password to installer
-sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password $PASSWORD"
-sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $PASSWORD"
-sudo apt-get -y install mysql-server
-sudo apt-get install php5-mysql
-
-# install phpmyadmin and give password(s) to installer
-# for simplicity I'm using the same password for mysql and phpmyadmin
-sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/dbconfig-install boolean true"
-sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/app-password-confirm password $PASSWORD"
-sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/mysql/admin-pass password $PASSWORD"
-sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/mysql/app-pass password $PASSWORD"
-sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2"
-sudo apt-get -y install phpmyadmin
+sudo chmod 777 -R /etc/httpd/logs/
 
 # setup hosts file
 VHOST=$(cat <<EOF
+NameVirtualHost *:80
 <VirtualHost *:80>
-    DocumentRoot "/var/www/html/${PROJECTFOLDER}"
-    ServerName www.test.elastic-test.com
-    <Directory "/var/www/html/${PROJECTFOLDER}">
-        AllowOverride All
-        Require all granted
-    </Directory>
+  ServerName ${DOMAINE}
+  DocumentRoot /var/www/html/${PROJECTFOLDER}
+  ErrorLog logs/${PROJECTFOLDER}-error_log
+ <Directory "/var/www/html/${PROJECTFOLDER}">
+       Options FollowSymLinks
+       AllowOverride All
+       Order allow,deny
+       Allow from all
+ </Directory>
 </VirtualHost>
 EOF
 )
-echo "${VHOST}" > /etc/apache2/sites-available/000-default.conf
+echo "${VHOST}" >> /etc/httpd/conf/httpd.conf
 
-# enable mod_rewrite
-sudo a2enmod rewrite
+
+sed -i 's/enforcing/disable/g' /etc/selinux/config
+
+#upgade to php 7
+wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+wget http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+rpm -Uvh remi-release-7.rpm epel-release-latest-7.noarch.rpm
+sudo yum-config-manager --enable remi-php70
+sudo yum update -y
+
+
 
 # restart apache
-service apache2 restart
+sudo systemctl restart httpd.service
 
 
 #elasticsearch
-sudo apt-get update
-sudo wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.0.0-alpha1.deb
-sha1sum elasticsearch-6.0.0-alpha1.deb
-sudo dpkg -i elasticsearch-6.0.0-alpha1.deb
+sudo yum install -y wget
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.4.0.rpm
+sha1sum elasticsearch-5.4.0.rpm 
+sudo rpm --install elasticsearch-5.4.0.rpm
 ps -p 1
-sudo update-rc.d elasticsearch defaults 95 10
+sudo chkconfig --add elasticsearch
+sudo -i service elasticsearch start
+sudo -i service elasticsearch stop
 sudo /bin/systemctl daemon-reload
 sudo /bin/systemctl enable elasticsearch.service
 sudo systemctl start elasticsearch.service
+
+sudo chmod 777 -R /etc/elasticsearch

@@ -12,7 +12,7 @@ class Database {
 	    'host'      => "localhost",
 	    'database'  => "elastic",
 	    'username'  => "root",
-	    'password'  => "aziz",
+	    'password'  => "",
 	    'charset'   => 'utf8',
 	    'collation' => 'utf8_unicode_ci',
 	    'prefix'    => '',
