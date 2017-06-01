@@ -63,3 +63,4 @@ sudo /bin/systemctl enable elasticsearch.service
 sudo systemctl start elasticsearch.service
 
 sudo chmod 777 -R /etc/elasticsearch
+
