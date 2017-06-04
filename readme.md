@@ -1,10 +1,16 @@
 ##show all index
+
 `GET 192.168.33.10:9200/_cat/indices?v`
+
 ##Create an index
+
 `PUT 192.168.33.10:9200/testindex?pretty`
+
 ##Create  a type to an index or add a properties to a type
+
 Example:
-`
+
+
 PUT Index_name 
 {
   "mappings": {
@@ -17,6 +23,7 @@ PUT Index_name
     }
   }
 }
+
 
 PUT Index_name/_mapping/type_name1
 {
@@ -35,11 +42,11 @@ PUT index_name/_mapping/type_name2
     }
   }
 }
-`
+
 ##Query search 
 
 Example:
-`
+
 POST /index_name/type_name/_search
 {
      "query": {
@@ -58,4 +65,3 @@ POST /index_name/type_name/_search
         }
     }
 }
-`
