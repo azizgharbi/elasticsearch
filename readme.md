@@ -43,7 +43,7 @@ PUT index_name/_mapping/type_name2
   }
 }
 
-##Query search 
+## Query search 
 
 Example:
 
