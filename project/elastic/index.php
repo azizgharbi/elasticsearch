@@ -3,8 +3,10 @@
 require 'vendor/autoload.php';
 $app = new Slim\App(['settings' => ['displayErrorDetails' => true]]);
 require('bootstrap.php');
-use Models\Event;
+use \Elastica\Request as Request;
+use \Elastica\Client as Client;
 
+use Models\Event;
 /*
 * Start app
 */
@@ -14,8 +16,21 @@ $app->get('/', function ($request, $response, $args) {
 })->setName('home');
 
 
-$app->get('/data', function ($request, $response, $args) {
 
+$app->get('/test', function ($request, $response, $args) {
+
+
+$elasticaClient = new Client(array(
+    'host' => 'localhost.elastic.test.com',
+    'port' => 9200
+));
+
+})->setName('test');
+
+
+
+
+$app->get('/data', function ($request, $response, $args) {
  for ($i=0; $i < 21 ; $i++) {
    $faker = Faker\Factory::create();
    Event::create([
@@ -23,8 +38,10 @@ $app->get('/data', function ($request, $response, $args) {
       'description'=> $faker->text
     ]);
  }
-
  return $response->withRedirect($this->router->pathFor('home'));
 })->setName('generate');
+
+
+/*start application*/
 
 $app->run();

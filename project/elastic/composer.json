@@ -12,7 +12,8 @@
         "slim/slim": "^3.0",
         "illuminate/database": "^5.4",
         "slim/twig-view": "^2.2",
-        "fzaninotto/faker": "^1.6"
+        "fzaninotto/faker": "^1.6",
+        "ruflin/elastica": "dev-master"
     },
     "autoload": {
         "psr-4": {
