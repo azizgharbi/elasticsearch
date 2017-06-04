@@ -1,12 +1,12 @@
-##show all index
+## Show all index
 
 `GET 192.168.33.10:9200/_cat/indices?v`
 
-##Create an index
+## Create an index
 
 `PUT 192.168.33.10:9200/testindex?pretty`
 
-##Create  a type to an index or add a properties to a type
+## Create  a type to an index or add a properties to a type
 
 Example:
 
