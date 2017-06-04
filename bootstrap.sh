@@ -61,6 +61,16 @@ sudo -i service elasticsearch stop
 sudo /bin/systemctl daemon-reload
 sudo /bin/systemctl enable elasticsearch.service
 sudo systemctl start elasticsearch.service
+yum install -y epel-release
+yum install -y ufw
+sudo ufw enable
+sudo ufw allow 21
+sudo ufw allow 80
+sudo ufw allow 22
+sudo allow allow 9200
+#test elasticsearch
+curl http://127.0.0.1:9200/
+
 
 sudo chmod 777 -R /etc/elasticsearch
 
