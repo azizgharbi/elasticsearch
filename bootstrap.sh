@@ -48,7 +48,8 @@ sudo yum update -y
 # restart apache
 sudo systemctl restart httpd.service
 
-
+#java 
+su -c "yum install -y java-1.8.0-openjdk"
 #elasticsearch
 sudo yum install -y wget
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.4.0.rpm

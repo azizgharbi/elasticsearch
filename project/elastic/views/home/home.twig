@@ -16,6 +16,26 @@
   <a class="button" href="{{path_for("index")}}">Index data to elasticsearch</a>
 </div>
 
-
 </div>
+
+{% if resultats %}
+
+ {% for resultat in resultats %}
+
+        {% for rep in resultat %}
+               
+                {% if rep.title %}
+
+                <li>{{rep.title}} // {{rep.description}}</li>
+
+                {% endif %}
+
+        {% endfor %}
+
+    {% endfor %}
+
+{% endif %}
+
+
+
 {% endblock %}
