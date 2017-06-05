@@ -6,3 +6,27 @@
 /**
 * php code
 */
+
+use \Elastica\Request as Request;
+use \Elastica\Client as Client;
+use \Elastica\Type\Mapping as Mapping;
+use \Elastica\Document as Document;
+use Models\Event;
+
+//Connecting to elasticsearch server
+$elasticaClient = new Client(array(
+    'host' => 'localhost.elastic.test.com',
+    'port' => 9200
+));
+//load index
+$elasticaIndex = $elasticaClient->getIndex('testindex');
+//create a type => table
+$elasticaType = $elasticaIndex->getType('event');
+//import all events
+$events=Event::all();
+$docs = array();
+foreach ($events as $event) {
+    $docs[] = new Document($event->id,$event);
+}
+// Refresh Index
+$elasticaType->getIndex()->refresh();

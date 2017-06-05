@@ -1,14 +1,18 @@
 <?php
 
 require 'vendor/autoload.php';
+//Slim
 $app = new Slim\App(['settings' => ['displayErrorDetails' => true]]);
+//Start
 require('bootstrap.php');
-use \Elastica\Request as Request;
-use \Elastica\Client as Client;
-
+//Elasticsearch
+use Elasticsearch\ClientBuilder;
+//Models
 use Models\Event;
+
 /*
-* Start app
+* Routes
+* POST GET PUT PATCH PUT DELETE
 */
 
 $app->get('/', function ($request, $response, $args) {
@@ -16,19 +20,39 @@ $app->get('/', function ($request, $response, $args) {
 })->setName('home');
 
 
+$app->get('/index', function ($request, $response, $args) {
 
-$app->get('/test', function ($request, $response, $args) {
+ $hosts = ['192.168.33.10:9200'];
+ $client = ClientBuilder::create()->setHosts($hosts)->build();
+
+ $events = Event::all();
+ foreach ($events as $event) {
+  $params = [
+    'index' => 'testindex',
+    'type' => 'event',
+    'id' => $event->id,
+    'body' => ['title' => $event->title,'description'=> $event->description]];
+
+   $client->index($params);
+ }
+  return $response->withRedirect($this->router->pathFor('home'));
+
+})->setName('index');
 
 
-$elasticaClient = new Client(array(
-    'host' => 'localhost.elastic.test.com',
-    'port' => 9200
-));
+$app->get('/search', function ($request, $response, $args) {
+  $key = $_GET['s'];
+  $params = [
+    'index' => 'testindex',
+    'type' => 'event',
+    'body' => ['query' => ['match' => ['description' => $key]]]];
 
-})->setName('test');
+  $hosts = ['192.168.33.10:9200'];
+  $client = ClientBuilder::create()->setHosts($hosts)->build();
+  $rep = $client->search($params);
+  var_dump($rep);
 
-
-
+})->setName('search');
 
 $app->get('/data', function ($request, $response, $args) {
  for ($i=0; $i < 21 ; $i++) {

@@ -1,9 +1,21 @@
 {% extends "default.twig" %}
 
 {% block body %}
+
+<div style="display:-webkit-inline-box;">
+<form method="get" action="{{path_for("search")}}">
+  <div style="display: inline-flex;">
+    <input type="text" name="s" id="s"  placeholder="Keywords...">
+    <input type="submit" value="Search">
+  </div>
+</form>
+
+
 <div class="container">
   <a class="button" href="{{path_for("generate")}}">Generate data +20</a>
-  <a class="button" href="#">Index data to elasticsearch</a>
+  <a class="button" href="{{path_for("index")}}">Index data to elasticsearch</a>
 </div>
 
+
+</div>
 {% endblock %}
